@@ -146,6 +146,10 @@ const defaultData = {
     projects: [],
     aiSettings: loadAISettings(),
     chatHistory: [],
+    appearance: {
+        theme: 'dark', // 'dark', 'light', 'midnight', 'high-contrast'
+        font: 'inter', // 'inter', 'roboto', 'playfair', 'firacode'
+    },
 };
 
 export function CRMProvider({ children }) {
@@ -170,6 +174,13 @@ export function CRMProvider({ children }) {
         const { aiSettings: _ai, ...crmData } = data;
         localStorage.setItem(STORAGE_KEY, JSON.stringify(crmData));
     }, [data]);
+
+    useEffect(() => {
+        // Apply theme and font to the document root element
+        const root = document.documentElement;
+        root.setAttribute('data-theme', data.appearance?.theme || 'dark');
+        root.setAttribute('data-font', data.appearance?.font || 'inter');
+    }, [data.appearance]);
 
     const updateContact = (id, updates) => {
         setData(prev => ({
@@ -264,6 +275,13 @@ export function CRMProvider({ children }) {
         }));
     };
 
+    const updateAppearance = (updates) => {
+        setData(prev => ({
+            ...prev,
+            appearance: { ...prev.appearance, ...updates }
+        }));
+    };
+
     const getCRMContext = () => {
         const { contacts, invoices, tasks } = data;
         return `
@@ -298,6 +316,7 @@ ${tasks.filter(t => !t.done).map(t => `- [PRIORITÃ‰: ${t.priority}] ${t.text} (Ã
             addProject, updateProject, deleteProject,
             updateAISettings,
             addChatMessage,
+            updateAppearance,
             getCRMContext,
             callAI,
         }}>

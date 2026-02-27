@@ -1,12 +1,13 @@
 import { useState, useEffect } from 'react';
 import { useCRM } from '../context/CRMContext';
-import { Save, Eye, EyeOff, CheckCircle, Settings2, Cpu, Loader, ExternalLink, AlertCircle, CheckCircle2 } from 'lucide-react';
+import { Save, Eye, EyeOff, CheckCircle, Settings2, Cpu, Loader, ExternalLink, AlertCircle, CheckCircle2, Paintbrush } from 'lucide-react';
 import { testAIConnection } from '../utils/ai.js';
 
 export default function Settings() {
-    const { aiSettings, updateAISettings } = useCRM();
+    const { aiSettings, updateAISettings, appearance, updateAppearance } = useCRM();
 
     const [form, setForm] = useState({ ...aiSettings });
+    const [appForm, setAppForm] = useState({ theme: 'dark', font: 'inter', ...(appearance || {}) });
     const [saved, setSaved] = useState(false);
     const [showOpenAIKey, setShowOpenAIKey] = useState(false);
     const [showGeminiKey, setShowGeminiKey] = useState(false);
@@ -17,12 +18,15 @@ export default function Settings() {
     // Keep form in sync if aiSettings change externally
     useEffect(() => {
         setForm({ ...aiSettings });
-    }, [aiSettings]);
+        setAppForm({ theme: 'dark', font: 'inter', ...(appearance || {}) });
+    }, [aiSettings, appearance]);
 
     const set = (k, v) => setForm(prev => ({ ...prev, [k]: v }));
+    const setApp = (k, v) => setAppForm(prev => ({ ...prev, [k]: v }));
 
     const handleSave = () => {
         updateAISettings(form);
+        updateAppearance(appForm);
         setSaved(true);
         setTestResult(null);
         setTimeout(() => setSaved(false), 2500);
@@ -213,6 +217,40 @@ export default function Settings() {
                             </p>
                         </div>
                     )}
+                </div>
+
+                {/* Appearance Card */}
+                <div className="card mb-4">
+                    <div className="flex items-center gap-3 mb-6">
+                        <div style={{ width: 36, height: 36, borderRadius: 10, background: 'rgba(236,72,153,0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                            <Paintbrush size={18} color="#ec4899" />
+                        </div>
+                        <div>
+                            <h3 className="font-semibold">Apparence & Couleurs</h3>
+                            <p className="text-sm text-secondary">Personnalisez le thème et la typographie de votre CRM.</p>
+                        </div>
+                    </div>
+
+                    <div className="grid grid-2 gap-4">
+                        <div className="input-group">
+                            <label className="input-label">Thème Couleur</label>
+                            <select className="input" value={appForm.theme} onChange={e => setApp('theme', e.target.value)}>
+                                <option value="dark">🌙 Sombre (Défaut)</option>
+                                <option value="midnight">🌌 Bleu Nuit (Contraste +)</option>
+                                <option value="light">☀️ Clair</option>
+                                <option value="high-contrast">⬛ Contraste Élevé</option>
+                            </select>
+                        </div>
+                        <div className="input-group">
+                            <label className="input-label">Typographie principale</label>
+                            <select className="input" value={appForm.font} onChange={e => setApp('font', e.target.value)}>
+                                <option value="inter">Inter (Moderne, Lisible)</option>
+                                <option value="roboto">Roboto (Classique)</option>
+                                <option value="playfair">Playfair Display (Élégant, Serif)</option>
+                                <option value="firacode">Fira Code (Technique, Monospace)</option>
+                            </select>
+                        </div>
+                    </div>
                 </div>
 
                 {/* User Profile */}
