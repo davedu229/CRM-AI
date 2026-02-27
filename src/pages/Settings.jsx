@@ -234,7 +234,10 @@ export default function Settings() {
                     <div className="grid grid-2 gap-4">
                         <div className="input-group">
                             <label className="input-label">Thème Couleur</label>
-                            <select className="input" value={appForm.theme} onChange={e => setApp('theme', e.target.value)}>
+                            <select className="input" value={appForm.theme} onChange={e => {
+                                setApp('theme', e.target.value);
+                                updateAppearance({ theme: e.target.value });
+                            }}>
                                 <option value="dark">🌙 Sombre (Défaut)</option>
                                 <option value="midnight">🌌 Bleu Nuit (Contraste +)</option>
                                 <option value="light">☀️ Clair</option>
@@ -243,7 +246,10 @@ export default function Settings() {
                         </div>
                         <div className="input-group">
                             <label className="input-label">Typographie principale</label>
-                            <select className="input" value={appForm.font} onChange={e => setApp('font', e.target.value)}>
+                            <select className="input" value={appForm.font} onChange={e => {
+                                setApp('font', e.target.value);
+                                updateAppearance({ font: e.target.value });
+                            }}>
                                 <option value="inter">Inter (Moderne, Lisible)</option>
                                 <option value="roboto">Roboto (Classique)</option>
                                 <option value="playfair">Playfair Display (Élégant, Serif)</option>
