@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>CRM AI — LinkedIn Import</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            width: 380px;
+            min-height: 200px;
+            background: #0f0e17;
+            color: #e2e8f0;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            font-size: 13px;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #6c63ff, #a78bfa);
+            padding: 14px 16px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .logo {
+            font-size: 15px;
+            font-weight: 800;
+            color: white;
+            letter-spacing: -0.5px;
+        }
+
+        .logo span {
+            opacity: 0.75;
+        }
+
+        .content {
+            padding: 16px;
+        }
+
+        .no-profile {
+            text-align: center;
+            padding: 28px 16px;
+            color: #94a3b8;
+        }
+
+        .no-profile .icon {
+            font-size: 36px;
+            margin-bottom: 10px;
+        }
+
+        .profile-card {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+            padding: 14px;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            margin-bottom: 12px;
+        }
+
+        .profile-name {
+            font-size: 15px;
+            font-weight: 700;
+            margin-bottom: 3px;
+            color: #f1f5f9;
+        }
+
+        .profile-headline {
+            font-size: 12px;
+            color: #a78bfa;
+            margin-bottom: 4px;
+        }
+
+        .profile-company {
+            font-size: 12px;
+            color: #94a3b8;
+        }
+
+        .profile-location {
+            font-size: 11px;
+            color: #64748b;
+            margin-top: 3px;
+        }
+
+        .section-title {
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            color: #64748b;
+            margin-bottom: 6px;
+        }
+
+        .input-group {
+            margin-bottom: 10px;
+        }
+
+        .input-group label {
+            display: block;
+            font-size: 11px;
+            color: #94a3b8;
+            margin-bottom: 4px;
+        }
+
+        .input-group input,
+        .input-group select {
+            width: 100%;
+            background: rgba(255, 255, 255, 0.06);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 6px;
+            color: #f1f5f9;
+            padding: 8px 10px;
+            font-size: 12px;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+
+        .input-group input:focus {
+            border-color: #6c63ff;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 99px;
+            font-size: 10px;
+            font-weight: 600;
+        }
+
+        .badge-purple {
+            background: rgba(108, 99, 255, 0.15);
+            color: #a78bfa;
+        }
+
+        .badge-green {
+            background: rgba(16, 185, 129, 0.15);
+            color: #34d399;
+        }
+
+        .btn {
+            width: 100%;
+            padding: 10px;
+            border-radius: 8px;
+            border: none;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            transition: all 0.2s;
+            margin-bottom: 8px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #6c63ff, #a78bfa);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            opacity: 0.9;
+            transform: translateY(-1px);
+        }
+
+        .btn-primary:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.06);
+            color: #e2e8f0;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .btn-green {
+            background: linear-gradient(135deg, #10b981, #34d399);
+            color: white;
+        }
+
+        .icebreaker-box {
+            background: rgba(108, 99, 255, 0.08);
+            border: 1px solid rgba(108, 99, 255, 0.2);
+            border-radius: 8px;
+            padding: 12px;
+            margin-bottom: 12px;
+            font-size: 12px;
+            line-height: 1.6;
+            color: #cbd5e1;
+            white-space: pre-wrap;
+        }
+
+        .icebreaker-label {
+            font-size: 10px;
+            color: #a78bfa;
+            font-weight: 600;
+            margin-bottom: 6px;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .spinner {
+            width: 14px;
+            height: 14px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-top-color: white;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+            display: inline-block;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        .error-box {
+            background: rgba(239, 68, 68, 0.1);
+            border: 1px solid rgba(239, 68, 68, 0.2);
+            border-radius: 6px;
+            padding: 8px 10px;
+            font-size: 11px;
+            color: #f87171;
+            margin-bottom: 10px;
+        }
+
+        .success-box {
+            background: rgba(16, 185, 129, 0.1);
+            border: 1px solid rgba(16, 185, 129, 0.2);
+            border-radius: 6px;
+            padding: 8px 10px;
+            font-size: 11px;
+            color: #34d399;
+            margin-bottom: 10px;
+        }
+
+        .divider {
+            border: none;
+            border-top: 1px solid rgba(255, 255, 255, 0.08);
+            margin: 12px 0;
+        }
+
+        .settings-toggle {
+            cursor: pointer;
+            font-size: 11px;
+            color: #64748b;
+            text-align: center;
+            padding: 4px;
+            margin-top: 4px;
+        }
+
+        .settings-toggle:hover {
+            color: #94a3b8;
+        }
+
+        .settings-panel {
+            background: rgba(255, 255, 255, 0.02);
+            border-radius: 8px;
+            padding: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            margin-bottom: 12px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="header">
+        <div class="logo">CRM<span>AI</span></div>
+        <div style="margin-left: auto; font-size: 11px; opacity: 0.7;">LinkedIn Import</div>
+    </div>
+
+    <div class="content" id="content">
+        <div class="no-profile">
+            <div class="icon">👤</div>
+            <p>Chargement...</p>
+        </div>
+    </div>
+
+    <script src="popup.js"></script>
+</body>
+
+</html>
