@@ -3,6 +3,7 @@ import { useParams, useNavigate, Link } from 'react-router-dom';
 import { useCRM } from '../context/CRMContext';
 import { ArrowLeft, Mail, Phone, Building, Edit2, Trash2, Sparkles, CheckCircle, Circle, Plus, X, Send } from 'lucide-react';
 import ContactModal from '../components/ContactModal';
+import AIMarkdown from '../components/AIMarkdown';
 
 const stages = ['À contacter', 'En discussion', 'Devis envoyé', 'Gagné', 'Perdu'];
 const stageColor = {
@@ -13,7 +14,7 @@ const stageColor = {
 export default function ContactDetail() {
     const { id } = useParams();
     const navigate = useNavigate();
-    const { contacts, updateContact, deleteContact, moveContact, invoices, tasks, toggleTask, addTask, callAI, getCRMContext, aiSettings } = useCRM();
+    const { contacts, updateContact, deleteContact, moveContact, invoices, callAI, aiSettings } = useCRM();
 
     const contact = contacts.find(c => c.id === id);
     const [showEdit, setShowEdit] = useState(false);
@@ -33,7 +34,6 @@ export default function ContactDetail() {
     }
 
     const contactInvoices = invoices.filter(inv => inv.contactId === id);
-    const contactTasks = tasks.filter(t => t.contactId === id);
     const totalBilled = contactInvoices.reduce((s, i) => s + i.amount, 0);
 
     const handleDelete = () => {
@@ -59,7 +59,6 @@ export default function ContactDetail() {
         setAiLoading(true);
         setEmailDraft('');
         try {
-            const crmCtx = getCRMContext();
             const prompt = `Tu es un assistant commercial expert pour freelances. Génère un email professionnel de type "${emailType}" pour le contact suivant.
 
 Contact: ${contact.name} (${contact.company})
@@ -69,7 +68,8 @@ Notes: ${contact.notes}
 Historique email: ${contact.emails?.map(e => e.subject).join(', ') || 'Aucun'}
 Total facturé: ${totalBilled}€
 
-Génère un email court, personnalisé, professionnel et percutant. Ne mets pas de sujet, juste le corps de l'email.`;
+Génère un email court, personnalisé, professionnel et percutant. 
+ATTENTION : Ne mets pas de sujet, juste le corps de l'email. Utilise du **Markdown riche** pour mettre en valeur les passages importants (comme les appels à l'action ou les chiffres clés en **gras**). N'inclut pas les balises markdown de code au début ou à la fin.`;
 
             const result = await callAI([{ role: 'user', content: prompt }], 'Tu es un expert en communication commerciale pour freelances.');
             setEmailDraft(result);
@@ -212,9 +212,9 @@ Génère un email court, personnalisé, professionnel et percutant. Ne mets pas 
                                     {aiLoading ? <><span className="spinner" /> Génération en cours...</> : <><Sparkles size={16} /> Générer l'email</>}
                                 </button>
                                 {emailDraft && (
-                                    <div>
-                                        <textarea className="input" value={emailDraft} onChange={e => setEmailDraft(e.target.value)} rows={8} />
-                                        <div className="flex gap-2 mt-2 justify-end">
+                                    <div className="card-glass p-4 mt-4" style={{ border: '1px solid rgba(167, 139, 250, 0.3)' }}>
+                                        <AIMarkdown content={emailDraft} />
+                                        <div className="flex gap-2 mt-4 justify-end border-t pt-3" style={{ borderColor: 'var(--border)' }}>
                                             <button className="btn btn-ghost btn-sm" onClick={() => navigator.clipboard.writeText(emailDraft)}>Copier</button>
                                             <button className="btn btn-primary btn-sm"><Send size={14} /> Envoyer</button>
                                         </div>

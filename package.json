@@ -24,7 +24,10 @@
     "pdfjs-dist": "^5.4.624",
     "react": "^19.2.0",
     "react-dom": "^19.2.0",
-    "react-router-dom": "^7.13.1"
+    "react-markdown": "^10.1.0",
+    "react-router-dom": "^7.13.1",
+    "rehype-raw": "^7.0.0",
+    "remark-gfm": "^4.0.1"
   },
   "devDependencies": {
     "@electron/packager": "^19.0.5",

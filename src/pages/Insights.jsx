@@ -2,6 +2,7 @@ import { useState, useMemo } from 'react';
 import { useCRM } from '../context/CRMContext';
 import { getActiveKey } from '../utils/ai.js';
 import { TrendingUp, Sparkles, Calendar, DollarSign, BarChart2, AlertCircle, Target } from 'lucide-react';
+import AIMarkdown from '../components/AIMarkdown';
 
 const DAYS = ['Dimanche', 'Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi', 'Samedi'];
 const MONTHS = ['Jan', 'Fév', 'Mar', 'Avr', 'Mai', 'Jun', 'Jul', 'Aoû', 'Sep', 'Oct', 'Nov', 'Déc'];
@@ -98,8 +99,8 @@ Données CRM:
 - Contacts: ${contacts.length} dont ${contacts.filter(c => c.stage === 'Gagné').length} gagnés et ${contacts.filter(c => c.stage === 'Perdu').length} perdus
 `;
             const raw = await callAI(
-                [{ role: 'user', content: `Analyse ces données commerciales d'un freelance et donne 3-4 recommandations concrètes et actionnables pour améliorer ses performances.\n\n${summary}` }],
-                'Tu es un conseiller commercial expert pour les freelances. Sois direct, concret et donne des conseils actionnables basés sur les données. Utilise des emojis pour structurer ta réponse. Réponds en français.'
+                [{ role: 'user', content: `Analyse ces données commerciales d'un freelance et donne 3-4 recommandations concrètes et stratégiques pour améliorer ses performances ou ses revenus.\n\n${summary}` }],
+                'Tu es un conseiller commercial expert pour les freelances. Sois direct, concret et donne des conseils de très haute valeur. ATTENTION: Tu dois formater la réponse en **Markdown riche** (avec des listes, du gras, et des emojis) en respectant un style très premium.'
             );
             setAiInsight(raw);
         } catch (e) {
@@ -157,11 +158,11 @@ Données CRM:
                     {/* AI Insight box */}
                     {aiInsight && (
                         <div className="card mb-6" style={{ background: 'linear-gradient(135deg, rgba(108,99,255,0.08), rgba(167,139,250,0.04))', borderColor: 'rgba(108,99,255,0.25)' }}>
-                            <div className="flex items-center gap-2 mb-3">
-                                <span className="ai-badge">✨ IA</span>
-                                <p className="font-semibold">Recommandations personnalisées</p>
+                            <div className="flex items-center gap-2 mb-4">
+                                <span className="ai-badge">✨ Copilote</span>
+                                <p className="font-semibold text-accent">Analyse Stratégique</p>
                             </div>
-                            <p style={{ lineHeight: 1.8, color: 'var(--text-secondary)', whiteSpace: 'pre-wrap' }}>{aiInsight}</p>
+                            <AIMarkdown content={aiInsight} />
                         </div>
                     )}
 

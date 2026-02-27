@@ -2,6 +2,7 @@ import { useState, useRef, useEffect } from 'react';
 import { useCRM } from '../context/CRMContext';
 import { Send, Sparkles, MessageSquare, Link } from 'lucide-react';
 import { Link as RouterLink } from 'react-router-dom';
+import AIMarkdown from '../components/AIMarkdown';
 
 const SUGGESTIONS = [
     "Qui dois-je relancer cette semaine ?",
@@ -49,8 +50,8 @@ export default function Chat() {
 
             const systemPrompt = `Tu es le copilote IA d'un CRM pour freelance. Tu as accès à toutes les données du CRM de l'utilisateur.
       
-Réponds toujours en français, de manière concise et actionnable. Utilise des emojis pour rendre tes réponses plus lisibles.
-Si l'utilisateur demande une liste, utilise des puces. Sois direct et donne des recommandations concrètes.
+Réponds toujours en français, de manière experte et actionnable. 
+ATTENTION : Tu dois formater tes réponses en **Markdown riche** pour que ce soit magnifique à lire (utilise des titres en gras, des listes à puces esthétiques, des emojis, et met en **gras** les mots clés et chiffres importants).
 
 DONNÉES CRM ACTUELLES:
 ${crmCtx}`;
@@ -104,8 +105,8 @@ ${crmCtx}`;
                             <div className={`chat-avatar ${msg.role}`}>
                                 {msg.role === 'ai' ? <Sparkles size={16} color="white" /> : '🧑'}
                             </div>
-                            <div className="chat-bubble" style={{ whiteSpace: 'pre-wrap' }}>
-                                {msg.content}
+                            <div className="chat-bubble" style={msg.role === 'user' ? { whiteSpace: 'pre-wrap' } : {}}>
+                                {msg.role === 'ai' ? <AIMarkdown content={msg.content} /> : msg.content}
                             </div>
                         </div>
                     ))}

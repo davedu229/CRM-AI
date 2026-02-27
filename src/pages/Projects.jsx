@@ -7,6 +7,7 @@ import {
     Link as LinkIcon, User, Edit2, Check
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import AIMarkdown from '../components/AIMarkdown';
 
 const STATUS_OPTIONS = ['En cours', 'Planifié', 'Terminé', 'En pause'];
 const PRIORITY_OPTIONS = ['haute', 'normale', 'faible'];
@@ -93,7 +94,7 @@ function ProjectModal({ project, contacts, onSave, onClose }) {
 }
 
 // ─── Single Project Card ────────────────────────────────────────────────────────
-function ProjectCard({ project, contacts, onUpdate, onDelete, callAI, aiSettings }) {
+function ProjectCard({ project, contacts, onUpdate, onDelete, onEdit, callAI, aiSettings }) {
     const [expanded, setExpanded] = useState(true);
     const [newTask, setNewTask] = useState('');
     const [newDate, setNewDate] = useState('');
@@ -149,7 +150,7 @@ Génère 5 à 8 tâches concrètes et actionnables. Réponds UNIQUEMENT avec un 
   "tasks": [
     { "text": "Description claire de la tâche", "priority": "haute|normale|faible", "daysFromNow": 3 }
   ],
-  "advice": "Un conseil court et actionnable pour ce projet"
+  "advice": "Un conseil détaillé et stratégique pour ce projet, formaté en **Markdown riche** (utilise du gras, des listes si besoin, et des emojis)."
 }`;
 
             const raw = await callAI([{ role: 'user', content: prompt }], 'Tu es un chef de projet expert pour freelances. Réponds UNIQUEMENT en JSON valide.');
@@ -206,7 +207,7 @@ Génère 5 à 8 tâches concrètes et actionnables. Réponds UNIQUEMENT avec un 
                     </div>
                 </div>
                 <div className="flex items-center gap-2">
-                    <button className="btn btn-ghost btn-sm" onClick={() => setEditingProjectId(project.id)} title="Modifier">
+                    <button className="btn btn-ghost btn-sm" onClick={() => onEdit(project)} title="Modifier">
                         <Edit2 size={13} />
                     </button>
                     <button className="btn btn-ghost btn-sm" onClick={() => onDelete(project.id)} title="Supprimer">
@@ -247,11 +248,11 @@ Génère 5 à 8 tâches concrètes et actionnables. Réponds UNIQUEMENT avec un 
                     {/* AI Advice */}
                     {project.aiAdvice && (
                         <div style={{ background: 'rgba(108,99,255,0.06)', border: '1px solid rgba(108,99,255,0.15)', borderRadius: 8, padding: '10px 14px', marginBottom: 16 }}>
-                            <div className="flex items-center gap-2 mb-1">
-                                <span className="ai-badge">✨ IA</span>
-                                <p className="text-xs font-semibold" style={{ color: 'var(--accent-secondary)' }}>Conseil IA</p>
+                            <div className="flex items-center gap-2 mb-2">
+                                <span className="ai-badge">✨ Copilote</span>
+                                <p className="text-xs font-semibold" style={{ color: 'var(--accent-secondary)' }}>Conseil Stratégique IA</p>
                             </div>
-                            <p className="text-sm text-secondary">{project.aiAdvice}</p>
+                            <AIMarkdown content={project.aiAdvice} />
                         </div>
                     )}
 
